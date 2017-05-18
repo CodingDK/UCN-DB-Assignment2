@@ -7,18 +7,18 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Models;
-using WebGUI.Models1;
+using BLL;
 
 namespace WebGUI.Controllers
 {
     public class CustomerController : Controller
     {
-        private WebGUIContext db = new WebGUIContext();
+        private CustomerBLL ctrl = new CustomerBLL();
 
         // GET: Customer
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            return View(ctrl.GetAll());
         }
 
         // GET: Customer/Details/5
@@ -28,7 +28,7 @@ namespace WebGUI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = ctrl.GetById(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -51,8 +51,7 @@ namespace WebGUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                //db.Customers.Add(customer);
-                db.SaveChanges();
+                ctrl.Create(customer);
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +65,7 @@ namespace WebGUI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = ctrl.GetById(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -83,8 +82,7 @@ namespace WebGUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
-                db.SaveChanges();
+                ctrl.Edit(customer);
                 return RedirectToAction("Index");
             }
             return View(customer);
@@ -97,7 +95,7 @@ namespace WebGUI.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = ctrl.GetById(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -110,19 +108,9 @@ namespace WebGUI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Customer customer = db.Customers.Find(id);
-            //db.Customers.Remove(customer);
-            db.SaveChanges();
+            Customer customer = ctrl.GetById(id);
+            ctrl.Delete(customer);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
