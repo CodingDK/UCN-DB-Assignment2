@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Models {
-    class Order {
+    public class Order {
         public string Id { get; set; }
         public DateTime Date { get; set; }
         public List<OrderLine> Lines { get; set; }
